@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="global.css">
+    <title>Login - Gear Galaxy</title>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="main-container container">
+            <a href="index4.html" style="color: white; font-size: 24px; font-weight: bold; text-decoration: none;">Gear Galaxy</a>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <div class="card" style="max-width: 400px; margin: 40px auto;">
+            <h3>LOGIN</h3>
+            <form id="loginForm">
+                <div style="display: flex; flex-direction: column; gap: 5px;">
+                    <label for="email">Email Address</label>
+                    <input type="email" placeholder="Enter your email" required id="email">
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 5px;">
+                    <label for="password">Password</label>
+                    <input type="password" placeholder="Password" minlength="8" required id="password">
+                </div>
+                <input type="submit" value="Login" class="btn">
+                
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; text-align: center;">
+                    <a href="index3.html" style="color: var(--accent-color); text-decoration: none;">OWNER SIGNUP</a>
+                    <a href="index2.html" style="color: var(--accent-color); text-decoration: none;">CUSTOMER SIGNUP</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Check if already logged in
+        window.onload = function() {
+            if (localStorage.getItem('currentOwnerId') || localStorage.getItem('customerId')) {
+                window.location.href = 'index4.html';
+            }
+        };
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            // 1. Check Owners
+            const owners = JSON.parse(localStorage.getItem('registeredOwners') || '[]');
+            const owner = owners.find(o => o.email === email && o.password === password);
+            
+            if (owner) {
+                localStorage.setItem('currentOwnerId', owner.id);
+                localStorage.setItem('ownerName', owner.firstName);
+                localStorage.setItem('ownerProfile', JSON.stringify(owner));
+                window.location.href = 'index4.html';
+                return;
+            }
+
+            // 2. Check Customers
+            const customers = JSON.parse(localStorage.getItem('registeredCustomers') || '[]');
+            const customer = customers.find(c => c.email === email && c.password === password);
+
+            if (customer) {
+                localStorage.setItem('customerId', customer.id);
+                localStorage.setItem('customerName', customer.firstName);
+                localStorage.setItem('customerProfile', JSON.stringify(customer));
+                window.location.href = 'index4.html';
+                return;
+            }
+
+            // 3. Fallback Demo Logic (if list is empty)
+            if (email.toLowerCase().includes('owner')) {
+                localStorage.setItem('currentOwnerId', Date.now());
+                localStorage.setItem('ownerName', email.split('@')[0]);
+            } else {
+                localStorage.setItem('customerId', Date.now());
+                localStorage.setItem('customerName', email.split('@')[0]);
+            }
+            
+            window.location.href = 'index4.html';
+        });
+    </script>
+</body>
+</html>

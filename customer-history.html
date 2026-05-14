@@ -57,6 +57,12 @@
     </div>
 
     <script>
+        // Security Check: Only customers can access this page
+        const customerId = localStorage.getItem('customerId');
+        if (!customerId) {
+            window.location.href = 'index.html';
+        }
+
         window.onload = function() {
             const history = JSON.parse(localStorage.getItem('rentalHistory') || '[]');
             const list = document.getElementById('historyList');
