@@ -63,7 +63,12 @@
     </div>
 
     <script>
-        const ownerId = localStorage.getItem('currentOwnerId') || 1; // Default to 1 for demo
+        // Security Check: Only owners can access this page
+        const ownerId = localStorage.getItem('currentOwnerId');
+        if (!ownerId) {
+            window.location.href = 'index.html';
+        }
+        
         const ownerName = localStorage.getItem('ownerName');
         
         if (ownerName) {

@@ -3,86 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gear Galaxy - Luxury Car Rental</title>
     <link rel="stylesheet" href="global.css">
-    <title>Login - Gear Galaxy</title>
 </head>
 <body>
     <nav class="navbar">
         <div class="main-container container">
-            <a href="index4.html" style="color: white; font-size: 24px; font-weight: bold; text-decoration: none;">Gear Galaxy</a>
+            <a href="index4.html" class="logo">GEAR GALAXY</a>
+            <div id="authNav">
+                <a href="index4.html">Home</a>
+                <a href="index5.html">Rent Now</a>
+                <a href="index3.html" id="navOwnerBtn">Owner Portal</a>
+                <a href="index.html" class="btn" id="loginBtn" style="padding: 8px 20px; margin-left: 20px;">Login</a>
+                <span id="userMenu" style="display: none;">
+                    <a href="customer-history.html" id="navHistoryLink" style="margin-left: 20px; display: none;">History</a>
+                    <a href="edit-profile.html" style="margin-left: 20px;">Profile</a>
+                    <a href="#" onclick="logout()" class="btn" style="padding: 8px 20px; margin-left: 20px; background-color: var(--secondary-color);">Logout</a>
+                </span>
+            </div>
         </div>
     </nav>
 
-    <div class="main-container">
-        <div class="card" style="max-width: 400px; margin: 40px auto;">
-            <h3>LOGIN</h3>
-            <form id="loginForm">
-                <div style="display: flex; flex-direction: column; gap: 5px;">
-                    <label for="email">Email Address</label>
-                    <input type="email" placeholder="Enter your email" required id="email">
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 5px;">
-                    <label for="password">Password</label>
-                    <input type="password" placeholder="Password" minlength="8" required id="password">
-                </div>
-                <input type="submit" value="Login" class="btn">
-                
-                <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; text-align: center;">
-                    <a href="index3.html" style="color: var(--accent-color); text-decoration: none;">OWNER SIGNUP</a>
-                    <a href="index2.html" style="color: var(--accent-color); text-decoration: none;">CUSTOMER SIGNUP</a>
-                </div>
-            </form>
-        </div>
-    </div>
-
     <script>
-        // Check if already logged in
-        window.onload = function() {
-            if (localStorage.getItem('currentOwnerId') || localStorage.getItem('customerId')) {
-                window.location.href = 'index4.html';
-            }
-        };
+        function checkLogin() {
+            const ownerId = localStorage.getItem('currentOwnerId');
+            const customerId = localStorage.getItem('customerId');
+            const loginBtn = document.getElementById('loginBtn');
+            const userMenu = document.getElementById('userMenu');
+            const heroListBtn = document.getElementById('heroListBtn');
+            const navOwnerBtn = document.getElementById('navOwnerBtn');
+            const navHistoryLink = document.getElementById('navHistoryLink');
 
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            
-            // 1. Check Owners
-            const owners = JSON.parse(localStorage.getItem('registeredOwners') || '[]');
-            const owner = owners.find(o => o.email === email && o.password === password);
-            
-            if (owner) {
-                localStorage.setItem('currentOwnerId', owner.id);
-                localStorage.setItem('ownerName', owner.firstName);
-                localStorage.setItem('ownerProfile', JSON.stringify(owner));
-                window.location.href = 'index4.html';
-                return;
+            if (ownerId) {
+                loginBtn.style.display = 'none';
+                userMenu.style.display = 'inline';
+                if (heroListBtn) heroListBtn.href = 'add-car.html';
+                if (navOwnerBtn) {
+                    navOwnerBtn.href = 'owner-dashboard.html';
+                    navOwnerBtn.textContent = 'Owner Dashboard';
+                }
+            } else if (customerId) {
+                loginBtn.style.display = 'none';
+                userMenu.style.display = 'inline';
+                if (navHistoryLink) navHistoryLink.style.display = 'inline';
+                if (heroListBtn) heroListBtn.style.display = 'none'; // Customers don't list cars
+                if (navOwnerBtn) navOwnerBtn.style.display = 'none';
             }
+        }
 
-            // 2. Check Customers
-            const customers = JSON.parse(localStorage.getItem('registeredCustomers') || '[]');
-            const customer = customers.find(c => c.email === email && c.password === password);
+        function logout() {
+            localStorage.removeItem('currentOwnerId');
+            localStorage.removeItem('ownerName');
+            localStorage.removeItem('customerId');
+            localStorage.removeItem('customerName');
+            window.location.reload();
+        }
 
-            if (customer) {
-                localStorage.setItem('customerId', customer.id);
-                localStorage.setItem('customerName', customer.firstName);
-                localStorage.setItem('customerProfile', JSON.stringify(customer));
-                window.location.href = 'index4.html';
-                return;
-            }
-
-            // 3. Fallback Demo Logic (if list is empty)
-            if (email.toLowerCase().includes('owner')) {
-                localStorage.setItem('currentOwnerId', Date.now());
-                localStorage.setItem('ownerName', email.split('@')[0]);
-            } else {
-                localStorage.setItem('customerId', Date.now());
-                localStorage.setItem('customerName', email.split('@')[0]);
-            }
-            
-            window.location.href = 'index4.html';
-        });
+        window.onload = checkLogin;
     </script>
+
+    <header style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('supercar1.jpg'); background-size: cover; background-position: center; height: 90vh; display: flex; align-items: center; color: white; text-align: center; border-radius: 0 0 40px 40px; margin-bottom: 60px;">
+        <div class="main-container" style="width: 100%;">
+            <h1 style="font-size: 5rem; margin-bottom: 20px; color: white; font-weight: 900; letter-spacing: -0.04em;">Drive the Extraordinary</h1>
+            <p style="font-size: 1.4rem; margin-bottom: 40px; max-width: 700px; margin-left: auto; margin-right: auto; opacity: 0.9; font-weight: 400;">
+                Curated collection of the world's most prestigious vehicles. 
+                Experience unparalleled luxury and performance on every journey.
+            </p>
+            <div style="display: flex; gap: 20px; justify-content: center;">
+                <a href="index5.html" class="btn" style="padding: 18px 45px; font-size: 1.1rem; box-shadow: 0 10px 20px rgba(255, 62, 62, 0.3);">Explore Fleet</a>
+                <a href="index3.html" id="heroListBtn" class="btn btn-secondary" style="padding: 18px 45px; font-size: 1.1rem;">List Your Car</a>
+            </div>
+        </div>
+    </header>
+
+    <section class="main-container" style="padding: 80px 20px;">
+        <h2 style="font-size: 2.5rem; margin-bottom: 50px;">Featured Collections</h2>
+        <div class="grid">
+            <div class="car-card">
+                <img src="bmw.jpeg" alt="BMW">
+                <div class="car-info">
+                    <h3>Premium Luxury</h3>
+                    <p>Experience the ultimate driving machine with our BMW series.</p>
+                </div>
+            </div>
+            <div class="car-card">
+                <img src="volvo.jpeg" alt="Volvo">
+                <div class="car-info">
+                    <h3>Safe & Elegant</h3>
+                    <p>Travel in style and safety with our top-of-the-line Volvo fleet.</p>
+                </div>
+            </div>
+            <div class="car-card">
+                <img src="supercar9.jpg" alt="Supercars">
+                <div class="car-info">
+                    <h3>Exotic Performance</h3>
+                    <p>Turn heads with our exclusive selection of high-performance supercars.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer style="background-color: var(--secondary-color); color: white; padding: 50px 0; text-align: center; margin-top: 50px;">
+        <div class="main-container">
+            <h3>Gear Galaxy</h3>
+            <p>&copy; 2026 Gear Galaxy Car Rental. All rights reserved.</p>
+        </div>
+    </footer>
 </body>
 </html>
