@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Sign Up - Gear Galaxy</title>
+    <link rel="stylesheet" href="global.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="main-container container">
+            <a href="index4.html" class="logo">GEAR GALAXY</a>
+            <div id="authNav">
+                <a href="index4.html">Home</a>
+                <a href="index.html" class="btn" id="loginBtn" style="padding: 8px 20px; margin-left: 20px;">Login</a>
+                <span id="userMenu" style="display: none;">
+                    <a href="customer-history.html" id="navHistoryLink" style="margin-left: 20px; display: none;">History</a>
+                    <a href="owner-dashboard.html" id="navDashboardLink" style="margin-left: 20px; display: none;">Dashboard</a>
+                    <a href="edit-profile.html" style="margin-left: 20px;">Edit Profile</a>
+                    <a href="#" onclick="logout()" class="btn" style="padding: 8px 20px; margin-left: 20px; background-color: var(--secondary-color);">Logout</a>
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <script>
+        function checkLogin() {
+            const ownerId = localStorage.getItem('currentOwnerId');
+            const customerId = localStorage.getItem('customerId');
+            const loginBtn = document.getElementById('loginBtn');
+            const userMenu = document.getElementById('userMenu');
+            const navHistoryLink = document.getElementById('navHistoryLink');
+            const navDashboardLink = document.getElementById('navDashboardLink');
+
+            if (ownerId || customerId) {
+                loginBtn.style.display = 'none';
+                userMenu.style.display = 'inline';
+                if (ownerId && navDashboardLink) navDashboardLink.style.display = 'inline';
+                if (customerId && navHistoryLink) navHistoryLink.style.display = 'inline';
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('currentOwnerId');
+            localStorage.removeItem('ownerName');
+            localStorage.removeItem('customerId');
+            localStorage.removeItem('customerName');
+            window.location.reload();
+        }
+
+        window.onload = checkLogin;
+    </script>
+
+    <div class="main-container">
+        <div class="card" style="max-width: 500px; margin: 40px auto;">
+            <h2>Customer Registration</h2>
+            <p style="text-align: center; color: #666; margin-bottom: 20px;">Find your dream car and hit the road today.</p>
+            
+            <form id="customerSignupForm">
+                <div style="display: flex; gap: 15px;">
+                    <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+                        <label for="firstName">First Name</label>
+                        <input type="text" id="firstName" required placeholder="Jane">
+                    </div>
+                    <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" id="lastName" required placeholder="Smith">
+                    </div>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" required placeholder="jane.smith@example.com">
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <label for="phoneNumber">Phone Number</label>
+                    <input type="text" id="phoneNumber" required placeholder="01XXXXXXXXX">
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required minlength="8" placeholder="Minimum 8 characters">
+                </div>
+
+                <div id="message" class="alert" style="display: none;"></div>
+                
+                <input type="submit" value="Register" class="btn" style="width: 100%; margin-top: 20px;">
+                
+                <p style="text-align: center; margin-top: 20px; font-size: 14px;">
+                    Already have an account? <a href="index.html" style="color: var(--accent-color);">Login here</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('customerSignupForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const messageDiv = document.getElementById('message');
+            messageDiv.style.display = 'none';
+
+            const data = {
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                email: document.getElementById('email').value,
+                phoneNumber: document.getElementById('phoneNumber').value,
+                password: document.getElementById('password').value
+            };
+
+                // TEMPORARY: Bypass backend connection
+                try {
+                    // Save to a persistent list of customers
+                    const customers = JSON.parse(localStorage.getItem('registeredCustomers') || '[]');
+                    
+                    // Check if email already exists
+                    if (customers.some(c => c.email === data.email)) {
+                        throw new Error('An account with this email already exists.');
+                    }
+
+                    const newCustomer = {
+                        id: Date.now(),
+                        ...data
+                    };
+                    customers.push(newCustomer);
+                    localStorage.setItem('registeredCustomers', JSON.stringify(customers));
+
+                    messageDiv.textContent = 'Account created! Redirecting to login...';
+                    messageDiv.className = 'alert alert-success';
+                    messageDiv.style.display = 'block';
+
+                    // Save session info
+                    localStorage.setItem('customerId', newCustomer.id);
+                    localStorage.setItem('customerName', data.firstName);
+                    localStorage.setItem('customerProfile', JSON.stringify(data));
+
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 2000);
+                } catch (error) {
+                    messageDiv.textContent = error.message;
+                    messageDiv.className = 'alert alert-error';
+                    messageDiv.style.display = 'block';
+                }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice - Gear Galaxy</title>
+    <link rel="stylesheet" href="global.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        .invoice-box {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 40px;
+            border: 1px solid #eee;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: var(--shadow-md);
+        }
+        .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--background-color);
+            padding-bottom: 30px;
+            margin-bottom: 30px;
+        }
+        .invoice-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        .detail-group h4 {
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-size: 12px;
+            margin-bottom: 8px;
+            letter-spacing: 0.05em;
+        }
+        .detail-group p {
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        .table th {
+            text-align: left;
+            padding: 12px;
+            background: var(--background-color);
+            color: var(--text-muted);
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+        .table td {
+            padding: 20px 12px;
+            border-bottom: 1px solid #eee;
+        }
+        .total-section {
+            text-align: right;
+            padding-top: 20px;
+        }
+        .total-row {
+            display: flex;
+            justify-content: flex-end;
+            gap: 50px;
+            margin-bottom: 10px;
+        }
+        .total-amount {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--primary-color);
+        }
+        @media print {
+            .navbar, .no-print { display: none; }
+            .invoice-box { box-shadow: none; border: none; margin: 0; padding: 0; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="main-container container">
+            <a href="index4.html" class="logo">GEAR GALAXY</a>
+            <div class="no-print">
+                <a href="index4.html">Home</a>
+                <a href="index5.html">Rent Now</a>
+                <a href="customer-history.html">History</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <div class="invoice-box">
+            <div class="invoice-header">
+                <div>
+                    <h1 style="text-align: left; color: var(--primary-color);">INVOICE</h1>
+                    <p id="displayBillId" style="color: var(--text-muted); font-weight: 600;"></p>
+                </div>
+                <div style="text-align: right;">
+                    <h2 style="margin: 0;">Gear Galaxy</h2>
+                    <p style="color: var(--text-muted);">Luxury Car Rentals</p>
+                </div>
+            </div>
+
+            <div class="invoice-details">
+                <div class="detail-group">
+                    <h4>Billed To</h4>
+                    <p id="customerName">-</p>
+                    <p id="customerEmail" style="font-weight: 400; color: var(--text-muted);">-</p>
+                </div>
+                <div class="detail-group" style="text-align: right;">
+                    <h4>Date Issued</h4>
+                    <p id="displayDate">-</p>
+                </div>
+            </div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Duration</th>
+                        <th style="text-align: right;">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div style="font-weight: 700;" id="carName">Luxury Vehicle Rental</div>
+                            <div style="font-size: 13px; color: var(--text-muted);">Standard rental insurance included</div>
+                        </td>
+                        <td id="displayDays">0 days</td>
+                        <td style="text-align: right; font-weight: 700;" id="tableTotal">$0.00</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="total-section">
+                <div class="total-row">
+                    <span style="color: var(--text-muted); font-weight: 600;">Total Amount</span>
+                    <span class="total-amount" id="displayCost">$0.00</span>
+                </div>
+            </div>
+
+            <div class="no-print" style="margin-top: 50px; display: flex; gap: 15px; justify-content: flex-end;">
+                <button onclick="window.print()" class="btn btn-secondary" style="padding: 12px 30px;">Print Invoice</button>
+                <a href="index4.html" class="btn" style="padding: 12px 30px;">Return Home</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.onload = function() {
+            const days = parseInt(localStorage.getItem('DaysBetween')) || 0;
+            const carId = localStorage.getItem('currentRentingCarId');
+            const localCars = JSON.parse(localStorage.getItem('localCars') || '[]');
+            const car = localCars.find(c => c.id == carId);
+            
+            const dailyRate = car ? (car.price_per_day || car.pricePerDay) : 200;
+            const totalCost = days * dailyRate;
+            
+            // Get customer info
+            const customerName = localStorage.getItem('customerName') || 'Guest Customer';
+            const customerProfile = JSON.parse(localStorage.getItem('customerProfile') || '{}');
+            
+            document.getElementById('customerName').textContent = customerName;
+            document.getElementById('customerEmail').textContent = customerProfile.email || 'customer@geargalaxy.com';
+            
+            if (car) {
+                document.getElementById('carName').textContent = `${car.brand} ${car.model} Rental`;
+            }
+
+            document.getElementById('displayBillId').textContent = 'INV-' + Math.floor(Math.random() * 1000000);
+            document.getElementById('displayDate').textContent = new Date().toLocaleDateString('en-US', { 
+                year: 'numeric', month: 'long', day: 'numeric' 
+            });
+            
+            document.getElementById('displayDays').textContent = days + ' day(s)';
+            const formattedCost = '$' + totalCost.toLocaleString() + '.00';
+            document.getElementById('displayCost').textContent = formattedCost;
+            document.getElementById('tableTotal').textContent = formattedCost;
+
+            // SAVE RENTAL TO HISTORY AND UPDATE CAR STATUS
+            if (car) {
+                // 1. Update Car Status and add Renter Info
+                car.status = 'rented';
+                car.renterInfo = {
+                    name: customerName,
+                    email: customerProfile.email || 'N/A',
+                    phone: customerProfile.phoneNumber || 'N/A',
+                    days: days,
+                    total: totalCost,
+                    date: new Date().toLocaleDateString()
+                };
+                localStorage.setItem('localCars', JSON.stringify(localCars));
+
+                // 2. Save to customer history
+                const history = JSON.parse(localStorage.getItem('rentalHistory') || '[]');
+                history.push({
+                    id: 'INV-' + Math.floor(Math.random() * 1000000),
+                    carBrand: car.brand,
+                    carModel: car.model,
+                    date: new Date().toLocaleDateString(),
+                    days: days,
+                    total: totalCost,
+                    status: 'Completed'
+                });
+                localStorage.setItem('rentalHistory', JSON.stringify(history));
+            }
+        };
+    </script>
+</body>
+</html>

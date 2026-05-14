@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account - Gear Galaxy</title>
+    <link rel="stylesheet" href="global.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="main-container container">
+            <a href="index4.html" style="color: white; font-size: 24px; font-weight: bold; text-decoration: none;">Gear Galaxy</a>
+            <div>
+                <a href="index4.html">Home</a>
+                <a href="index5.html">Rent Now</a>
+                <a href="index9.html" class="active">Account</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <div class="card" style="max-width: 800px; margin: 40px auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 2px solid var(--accent-color); padding-bottom: 15px;">
+                <h2>My Account</h2>
+                <span style="background: var(--accent-color); color: white; padding: 5px 15px; border-radius: 20px; font-size: 14px;">Active Member</span>
+            </div>
+
+            <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 30px;">
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                    <div>
+                        <label style="color: #666; font-size: 14px;">First Name</label>
+                        <div id="FirstName" style="font-size: 18px; font-weight: 500;">-</div>
+                    </div>
+                    <div>
+                        <label style="color: #666; font-size: 14px;">Last Name</label>
+                        <div id="LastName" style="font-size: 18px; font-weight: 500;">-</div>
+                    </div>
+                    <div>
+                        <label style="color: #666; font-size: 14px;">Username</label>
+                        <div id="Username" style="font-size: 18px; font-weight: 500;">-</div>
+                    </div>
+                    <div>
+                        <label style="color: #666; font-size: 14px;">Phone Number</label>
+                        <div id="PhoneNumber" style="font-size: 18px; font-weight: 500;">-</div>
+                    </div>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                    <div>
+                        <label style="color: #666; font-size: 14px;">SSN</label>
+                        <div id="SSN" style="font-size: 18px; font-weight: 500;">-</div>
+                    </div>
+                    <div>
+                        <label style="color: #666; font-size: 14px;">Driving License</label>
+                        <div id="DrivingLicense" style="font-size: 18px; font-weight: 500;">-</div>
+                    </div>
+                    <div>
+                        <label style="color: #666; font-size: 14px;">Membership ID</label>
+                        <div id="MembershipID" style="font-size: 18px; font-weight: 500;">-</div>
+                    </div>
+                    <div>
+                        <label style="color: #666; font-size: 14px;">Address</label>
+                        <div id="Address" style="font-size: 18px; font-weight: 500;">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 40px; text-align: center;">
+                <a href="index.html" class="btn" style="background-color: var(--secondary-color); padding: 10px 40px;">Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const fields = ['SSN', 'Username', 'DrivingLicense', 'Address', 'MembershipID', 'FirstName', 'LastName', 'PhoneNumber'];
+        fields.forEach(field => {
+            const val = localStorage.getItem(field);
+            if (val) {
+                document.getElementById(field).textContent = val;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style7view.css">
+<title>Car Details</title>
+<style>
+  
+</style>
+</head>
+<body>
+  <nav>
+    <div class="container nav-container">
+        <a href="" class="logo"><h3>Gear Galaxy</h3></a>
+        <ul class="nav-link">
+            <li><a href="index4.html" style="--i:1;" >Home</a></li>
+            <li><a href="index5.html" style="--i:2;"> Rent Now</a></li>
+            <li><a href="index9.html" style="--i:3;">Account</a></li>
+            <li><a href="index7view.html" style="--i:4;"class="active">Car Details</a></li>
+           
+         
+        </ul>
+    </div>
+</nav>
+
+<div class="containers">
+  <div class="image-containers">
+    <div class="image-carousel">
+      <img src="bmw.jpeg" alt="Car Image 1">
+      <img src="bmw2.jpeg" alt="Car Image 2">
+      <img src="bmw3.jpeg" alt="Car Image 3">
+      <!-- Add more images as needed -->
+    </div>
+    <div class="thumbnails">
+      <div class="scroll-button prev">&lt;</div>
+      <div class="thumbnail"><img src="bmw.jpeg" alt="Thumbnail 1"></div>
+      <div class="thumbnail"><img src="bmw2.jpeg" alt="Thumbnail 2"></div>
+      <div class="thumbnail"><img src="bmw3.jpeg" alt="Thumbnail 3"></div>
+      <!-- Add more thumbnails as needed -->
+      <div class="scroll-button next">&gt;</div>
+    </div>
+  </div>
+  <div class="car-details">
+    <h2>Car Details</h2>
+    <ul>
+        <li><strong>Owner:</strong>Youssef Hamed</li>
+      <li><strong>Make:</strong>BMW</li>
+      <li><strong>Model:</strong>BMW X7</li>
+      <li><strong>Year:</strong> 2018</li>
+      <li><strong>Color:</strong> White</li>
+      <li><strong>Price:</strong> EG 5,000 Per Day</li>
+    </ul>
+    <button class="rent-button">Rent Now</button>
+  </div>
+</div>
+
+<div class="car-info">
+  <h2>Overview</h2>
+  <p>The BMW X7 has 1 Diesel Engine and 1 Petrol Engine on offer. The Diesel engine is 2993 cc while the Petrol engine is 2998 cc . It is available with Automatic transmission.Depending upon the variant and fuel type the X7 has a mileage of 11.29 to 14.31 kmpl . The X7 is a 6 seater 6 cylinder car and has length of 5181 mm, width of 2218 mm and a wheelbase of 2651 mm.
+
+  </p>
+</div>
+
+<script>
+  const imageCarousel = document.querySelector('.image-carousel');
+  const totalImages = imageCarousel.children.length;
+  let currentIndex = 0;
+
+  function moveCarousel() {
+    currentIndex = (currentIndex + 1) % totalImages;
+    imageCarousel.style.transform = `translateX(-${currentIndex * 100}%)`;
+  }
+
+  setInterval(moveCarousel, 5000); // Move carousel every 5 seconds
+
+  const prevButton = document.querySelector('.scroll-button.prev');
+  const nextButton = document.querySelector('.scroll-button.next');
+
+  prevButton.addEventListener('click', () => {
+    currentIndex = (currentIndex - 1 + totalImages) % totalImages;
+    imageCarousel.style.transform = `translateX(-${currentIndex * 100}%)`;
+  });
+
+  nextButton.addEventListener('click', () => {
+    currentIndex = (currentIndex + 1) % totalImages;
+    imageCarousel.style.transform = `translateX(-${currentIndex * 100}%)`;
+  });
+
+  const rentButton = document.querySelector('.rent-button');
+  rentButton.addEventListener('click', () => {
+    // Replace with your rent now functionality
+    alert('Rent now functionality');
+  });
+</script>
+
+</body>
+</html>

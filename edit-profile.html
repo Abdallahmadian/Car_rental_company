@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile - Gear Galaxy</title>
+    <link rel="stylesheet" href="global.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="main-container container">
+            <a href="index4.html" class="logo">GEAR GALAXY</a>
+            <div>
+                <a href="index4.html">Home</a>
+                <a href="owner-dashboard.html">Dashboard</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <div class="card" style="max-width: 600px; margin: 40px auto;">
+            <h2>Edit Profile</h2>
+            <form id="editProfileForm">
+                <div style="display: flex; gap: 15px;">
+                    <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+                        <label for="firstName">First Name</label>
+                        <input type="text" id="firstName" required>
+                    </div>
+                    <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" id="lastName" required>
+                    </div>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 15px;">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" required>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 15px;">
+                    <label for="phoneNumber">Phone Number</label>
+                    <input type="text" id="phoneNumber" required>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 15px;">
+                    <label for="password">New Password (leave blank to keep current)</label>
+                    <input type="password" id="password" minlength="8">
+                </div>
+
+                <div id="message" class="alert" style="display: none; margin-top: 20px;"></div>
+                
+                <input type="submit" value="Update Profile" class="btn" style="width: 100%; margin-top: 30px;">
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const ownerProfile = JSON.parse(localStorage.getItem('ownerProfile') || '{}');
+        const customerProfile = JSON.parse(localStorage.getItem('customerProfile') || '{}');
+        const currentProfile = Object.keys(ownerProfile).length ? ownerProfile : customerProfile;
+
+        function loadProfile() {
+            if (Object.keys(currentProfile).length === 0) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            document.getElementById('firstName').value = currentProfile.firstName || '';
+            document.getElementById('lastName').value = currentProfile.lastName || '';
+            document.getElementById('email').value = currentProfile.email || '';
+            document.getElementById('phoneNumber').value = currentProfile.phoneNumber || '';
+        }
+
+        document.getElementById('editProfileForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const messageDiv = document.getElementById('message');
+            
+            const updatedProfile = {
+                ...currentProfile,
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                email: document.getElementById('email').value,
+                phoneNumber: document.getElementById('phoneNumber').value
+            };
+
+            const newPass = document.getElementById('password').value;
+            if (newPass) updatedProfile.password = newPass;
+
+            if (localStorage.getItem('currentOwnerId')) {
+                localStorage.setItem('ownerProfile', JSON.stringify(updatedProfile));
+                localStorage.setItem('ownerName', updatedProfile.firstName);
+            } else {
+                localStorage.setItem('customerProfile', JSON.stringify(updatedProfile));
+                localStorage.setItem('customerName', updatedProfile.firstName);
+            }
+
+            messageDiv.textContent = 'Profile updated successfully!';
+            messageDiv.className = 'alert alert-success';
+            messageDiv.style.display = 'block';
+        });
+
+        window.onload = loadProfile;
+    </script>
+</body>
+</html>

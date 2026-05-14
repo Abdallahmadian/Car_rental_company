@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Your Car - Gear Galaxy</title>
+    <link rel="stylesheet" href="global.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="main-container container">
+            <a href="index4.html" class="logo">GEAR GALAXY</a>
+            <div id="authNav">
+                <a href="index4.html">Home</a>
+                <a href="index5.html">Rent Now</a>
+                <a href="owner-dashboard.html">Dashboard</a>
+                <span id="userMenu">
+                    <a href="edit-profile.html" style="margin-left: 20px;">Profile</a>
+                    <a href="#" onclick="logout()" class="btn" style="padding: 8px 20px; margin-left: 20px; background-color: var(--secondary-color);">Logout</a>
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <script>
+        function logout() {
+            localStorage.removeItem('currentOwnerId');
+            localStorage.removeItem('ownerName');
+            localStorage.removeItem('customerId');
+            localStorage.removeItem('customerName');
+            window.location.href = 'index.html';
+        }
+    </script>
+
+    <div class="main-container">
+        <div class="card" style="max-width: 800px; margin: 40px auto;">
+            <h2 style="text-align: center; margin-bottom: 10px;">List Your Car</h2>
+            <p style="text-align: center; color: #666; margin-bottom: 30px;">Fill in the details below to put your car up for rent.</p>
+            
+            <form id="addCarForm">
+                <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 30px;">
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <label for="brand">Brand</label>
+                            <input type="text" id="brand" required placeholder="e.g. BMW">
+                        </div>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <label for="model">Model</label>
+                            <input type="text" id="model" required placeholder="e.g. X5">
+                        </div>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <label for="year">Year</label>
+                            <input type="number" id="year" required min="1900" max="2026" value="2024">
+                        </div>
+
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <label for="pricePerDay">Daily Price ($)</label>
+                            <input type="number" id="pricePerDay" required min="1" placeholder="Price per day">
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <label for="color">Color</label>
+                            <input type="text" id="color" placeholder="e.g. Black">
+                        </div>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <label for="fuelType">Fuel Type</label>
+                            <select id="fuelType">
+                                <option value="Petrol">Petrol</option>
+                                <option value="Diesel">Diesel</option>
+                                <option value="Electric">Electric</option>
+                                <option value="Hybrid">Hybrid</option>
+                            </select>
+                        </div>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <label for="transmission">Transmission</label>
+                            <select id="transmission">
+                                <option value="Automatic">Automatic</option>
+                                <option value="Manual">Manual</option>
+                            </select>
+                        </div>
+
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <label>Car Photos (Please select 3 photos)</label>
+                            <input type="file" id="carImage1" accept="image/*" required style="margin-bottom: 5px;">
+                            <input type="file" id="carImage2" accept="image/*" required style="margin-bottom: 5px;">
+                            <input type="file" id="carImage3" accept="image/*" required>
+                            <small style="color: #666;">Choose 3 different angles of your car.</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
+                    <label for="description">Description</label>
+                    <textarea id="description" rows="4" placeholder="Tell customers more about your car..."></textarea>
+                </div>
+
+                <div id="message" class="alert" style="display: none;"></div>
+                
+                <div style="display: flex; gap: 20px; margin-top: 30px;">
+                    <input type="submit" value="List My Car" class="btn" style="flex: 2;">
+                    <a href="owner-dashboard.html" class="btn" style="flex: 1; background-color: var(--secondary-color);">Skip for now</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const ownerId = localStorage.getItem('currentOwnerId');
+        const ownerName = localStorage.getItem('ownerName');
+        
+        if (!ownerId) {
+            window.location.href = 'index3.html';
+        } else {
+            document.getElementById('welcomeMsg').textContent = `Welcome, ${ownerName}!`;
+        }
+
+        document.getElementById('addCarForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const messageDiv = document.getElementById('message');
+            messageDiv.style.display = 'none';
+
+            const files = [
+                document.getElementById('carImage1').files[0],
+                document.getElementById('carImage2').files[0],
+                document.getElementById('carImage3').files[0]
+            ];
+
+            const photoDataUrls = [];
+            
+            async function readAndSave() {
+                for (const file of files) {
+                    if (file) {
+                        const dataUrl = await new Promise((resolve) => {
+                            const reader = new FileReader();
+                            reader.onloadend = () => resolve(reader.result);
+                            reader.readAsDataURL(file);
+                        });
+                        photoDataUrls.push(dataUrl);
+                    }
+                }
+                saveCarData(photoDataUrls);
+            }
+
+            readAndSave();
+
+            function saveCarData(imageUrls) {
+                const data = {
+                    ownerId: ownerId,
+                    brand: document.getElementById('brand').value,
+                    model: document.getElementById('model').value,
+                    year: document.getElementById('year').value,
+                    color: document.getElementById('color').value,
+                    fuelType: document.getElementById('fuelType').value,
+                    transmission: document.getElementById('transmission').value,
+                    pricePerDay: document.getElementById('pricePerDay').value,
+                    images: imageUrls, // Save array of 3 images
+                    description: document.getElementById('description').value
+                };
+
+                // TEMPORARY: Bypass backend connection
+                try {
+                    const cars = JSON.parse(localStorage.getItem('localCars') || '[]');
+                    const newCar = {
+                        id: Date.now(),
+                        ...data,
+                        status: 'available'
+                    };
+                    cars.push(newCar);
+                    
+                    try {
+                        localStorage.setItem('localCars', JSON.stringify(cars));
+                    } catch (e) {
+                        if (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
+                            throw new Error('Image size is too large! Please use smaller photos or fewer images (Limit is 5MB total).');
+                        }
+                        throw e;
+                    }
+
+                    messageDiv.textContent = 'Car listed successfully with 3 photos (Demo Mode)! Redirecting to rent list...';
+                    messageDiv.className = 'alert alert-success';
+                    messageDiv.style.display = 'block';
+
+                    setTimeout(() => {
+                        window.location.href = 'index5.html';
+                    }, 2000);
+                } catch (error) {
+                    messageDiv.textContent = error.message || 'Something went wrong.';
+                    messageDiv.className = 'alert alert-error';
+                    messageDiv.style.display = 'block';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

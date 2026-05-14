@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rental History - Gear Galaxy</title>
+    <link rel="stylesheet" href="global.css">
+    <style>
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            transition: var(--transition);
+        }
+        .history-item:hover {
+            background: #fcfcfc;
+        }
+        .status-pill {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            background: #e3fcef;
+            color: #00875a;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="main-container container">
+            <a href="index4.html" class="logo">GEAR GALAXY</a>
+            <div>
+                <a href="index4.html">Home</a>
+                <a href="index5.html">Rent Now</a>
+                <a href="edit-profile.html">Profile</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <div style="margin: 50px 0;">
+            <h1>Your Rental History</h1>
+            <p style="color: var(--text-muted);">View all your past and current luxury car rentals.</p>
+        </div>
+
+        <div class="card" style="padding: 0; overflow: hidden;">
+            <div id="historyList">
+                <!-- History will be loaded here -->
+                <div style="padding: 50px; text-align: center;">
+                    <p style="color: var(--text-muted);">You haven't rented any cars yet.</p>
+                    <a href="index5.html" class="btn" style="margin-top: 20px;">Rent Your First Car</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.onload = function() {
+            const history = JSON.parse(localStorage.getItem('rentalHistory') || '[]');
+            const list = document.getElementById('historyList');
+
+            if (history.length > 0) {
+                list.innerHTML = history.reverse().map(item => `
+                    <div class="history-item">
+                        <div>
+                            <div style="font-weight: 700; font-size: 16px;">${item.id}</div>
+                            <div style="color: var(--secondary-color); font-weight: 600; font-size: 15px;">${item.carBrand || ''} ${item.carModel || 'Rental'}</div>
+                            <div style="color: var(--text-muted); font-size: 14px;">${item.date}</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-weight: 600;">${item.days} Days</div>
+                            <div style="color: var(--text-muted); font-size: 13px;">Duration</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-weight: 800; color: var(--secondary-color);">$${item.total.toLocaleString()}.00</div>
+                            <span class="status-pill">${item.status}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        };
+    </script>
+</body>
+</html>

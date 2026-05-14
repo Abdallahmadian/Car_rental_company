@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style6view.css">
+<title>Car Details</title>
+
+</head>
+<body>
+  <nav>
+    <div class="container nav-container">
+        <a href="" class="logo"><h3>Gear Galaxy</h3></a>
+        <ul class="nav-link">
+            <li><a href="index4.html" style="--i:1;" >Home</a></li>
+            <li><a href="index5.html" style="--i:2;"> Rent Now</a></li>
+            <li><a href="index9.html" style="--i:3;">Account</a></li>
+            <li><a href="index6view.html" style="--i:4;"class="active">Car Details</a></li>
+           
+         
+        </ul>
+    </div>
+</nav>
+
+<div class="containers">
+  <div class="image-containers">
+    <div class="image-carousel">
+      <img src="volvo.jpeg" alt="Car Image 1">
+      <img src="volvo1.jpeg" alt="Car Image 2">
+      <img src="volvo2.jpeg" alt="Car Image 3">
+      <!-- Add more images as needed -->
+    </div>
+    <div class="thumbnails">
+      <div class="scroll-button prev">&lt;</div>
+      <div class="thumbnail"><img src="volvo.jpeg" alt="Thumbnail 1"></div>
+      <div class="thumbnail"><img src="volvo1.jpeg" alt="Thumbnail 2"></div>
+      <div class="thumbnail"><img src="volvo2.jpeg" alt="Thumbnail 3"></div>
+      <!-- Add more thumbnails as needed -->
+      <div class="scroll-button next">&gt;</div>
+    </div>
+  </div>
+  <div class="car-details">
+    <h2>Car Details</h2>
+    <ul>
+      <li><strong>Owner:</strong>Ahmed Elsayed</li>
+      <li><strong>Make:</strong>Volvo</li>
+      <li><strong>Model:</strong> Volvo V60</li>
+      <li><strong>Year:</strong> 2020</li>
+      <li><strong>Color:</strong> Black</li>
+      <li><strong>Price:</strong> EG 2,500 Per Day</li>
+    </ul>
+    <button class="rent-button">Rent Now</button>
+  </div>
+</div>
+
+<div class="car-info">
+  <h2>Overview</h2>
+  <p>Station wagons are a great antidote to the common SUV, often providing better fuel economy and more pleasant driving dynamics than today's crossovers. They also have their own unique sense of style, which we love. Volvo makes some of the best—and only—wagons available today, and the V60 and V60 Cross Country serve as the entry-level models in the Swedish automaker's long-roof lineup. They slot below the larger V90 Cross Country wagon and offer the same Scandinavian style and luxurious interior trimmings as other Volvo models. Two V60 versions are available: the Cross Country, which has a lifted ride height and SUV-esque styling cues; and the Polestar Engineered, a performance-oriented plug-in hybrid. We like the Polestar hybrid for its impressive powertrain and sharp handling and the Cross Country for its comfortable ride, which, combined with its refined style and opulent interior appointments, earned it a spot on our 2024 Editors' Choice list.</p>
+</div>
+
+<script>
+  const imageCarousel = document.querySelector('.image-carousel');
+  const totalImages = imageCarousel.children.length;
+  let currentIndex = 0;
+
+  function moveCarousel() {
+    currentIndex = (currentIndex + 1) % totalImages;
+    imageCarousel.style.transform = `translateX(-${currentIndex * 100}%)`;
+  }
+
+  setInterval(moveCarousel, 5000); // Move carousel every 5 seconds
+
+  const prevButton = document.querySelector('.scroll-button.prev');
+  const nextButton = document.querySelector('.scroll-button.next');
+
+  prevButton.addEventListener('click', () => {
+    currentIndex = (currentIndex - 1 + totalImages) % totalImages;
+    imageCarousel.style.transform = `translateX(-${currentIndex * 100}%)`;
+  });
+
+  nextButton.addEventListener('click', () => {
+    currentIndex = (currentIndex + 1) % totalImages;
+    imageCarousel.style.transform = `translateX(-${currentIndex * 100}%)`;
+  });
+
+  const rentButton = document.querySelector('.rent-button');
+  rentButton.addEventListener('click', () => {
+    // Replace with your rent now functionality
+    alert('Rent now functionality');
+  });
+</script>
+
+</body>
+</html>

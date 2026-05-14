@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owner Dashboard - Gear Galaxy</title>
+    <link rel="stylesheet" href="global.css">
+    <style>
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .status-available { background: #d4edda; color: #155724; }
+        .status-rented { background: #fff3cd; color: #856404; }
+        .rental-info {
+            margin-top: 15px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="main-container container">
+            <a href="index4.html" class="logo">GEAR GALAXY</a>
+            <div id="authNav">
+                <a href="index4.html">Home</a>
+                <a href="index5.html">Rent Now</a>
+                <a href="add-car.html" class="btn" style="padding: 8px 20px; margin-left: 20px;">+ List New Car</a>
+                <span id="userMenu">
+                    <a href="edit-profile.html" style="margin-left: 20px;">Profile</a>
+                    <a href="#" onclick="logout()" class="btn" style="padding: 8px 20px; margin-left: 20px; background-color: var(--secondary-color);">Logout</a>
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <script>
+        function logout() {
+            localStorage.removeItem('currentOwnerId');
+            localStorage.removeItem('ownerName');
+            localStorage.removeItem('customerId');
+            localStorage.removeItem('customerName');
+            window.location.href = 'index.html';
+        }
+    </script>
+
+    <div class="main-container">
+        <div style="margin: 40px 0;">
+            <h2 id="ownerTitle">Your Fleet</h2>
+            <p style="color: #666;">Manage your cars and see who is renting them.</p>
+        </div>
+
+        <div id="carsGrid" class="grid">
+            <div style="text-align: center; grid-column: 1/-1; padding: 50px;">
+                <p>Loading your fleet...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ownerId = localStorage.getItem('currentOwnerId') || 1; // Default to 1 for demo
+        const ownerName = localStorage.getItem('ownerName');
+        
+        if (ownerName) {
+            document.getElementById('ownerTitle').textContent = `${ownerName}'s Fleet`;
+        }
+
+        async function loadDashboard() {
+            const grid = document.getElementById('carsGrid');
+            try {
+                // Try to fetch from backend first
+                let data = [];
+                try {
+                    const response = await fetch(`http://127.0.0.1:3000/api/owner/${ownerId}/dashboard`);
+                    if (response.ok) {
+                        data = await response.json();
+                    }
+                } catch (e) {
+                    console.log("Backend unavailable, checking local storage...");
+                }
+
+                // Merge with local storage cars for demo purposes
+                const localCars = JSON.parse(localStorage.getItem('localCars') || '[]');
+                // Filter local cars for the current owner (simulated)
+                const myLocalCars = localCars.filter(c => c.ownerId == ownerId || !c.ownerId);
+                
+                // Combine and remove duplicates by ID if necessary
+                const combinedData = [...data, ...myLocalCars];
+
+                if (combinedData.length === 0) {
+                    grid.innerHTML = `
+                        <div class="card" style="grid-column: 1/-1; text-align: center; padding: 50px;">
+                            <h3>You haven't listed any cars yet.</h3>
+                            <a href="add-car.html" class="btn" style="display: inline-block; margin-top: 20px;">Add Your First Car</a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                grid.innerHTML = combinedData.map(car => `
+                    <div class="car-card" onclick="window.location.href='car-details.html?id=${car.id}'" style="cursor: pointer;">
+                        <img src="${(car.images && car.images[0]) || car.image_path || 'bmw.jpeg'}" alt="${car.brand} ${car.model}" onerror="this.src='bmw.jpeg'">
+                        <div class="car-info">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <h3 style="margin:0;">${car.brand} ${car.model}</h3>
+                                <span class="status-badge status-${car.status}">${car.status.toUpperCase()}</span>
+                            </div>
+                            <p style="color: #666; font-size: 14px;">${car.year} | ${car.fuel_type || 'Petrol'} | ${car.transmission || 'Automatic'}</p>
+                            <p class="price" style="margin: 10px 0;">$${car.price_per_day || car.pricePerDay} <span style="font-size: 12px; font-weight: normal; color: #666;">/ day</span></p>
+                            
+                            ${car.status === 'rented' ? `
+                                <div class="rental-info">
+                                    <p><strong>Renter:</strong> ${car.renterInfo ? car.renterInfo.name : (car.cust_fname || 'John')}</p>
+                                    <p><strong>Contact:</strong> ${car.renterInfo ? car.renterInfo.phone : (car.cust_phone || 'N/A')}</p>
+                                    <p><strong>Duration:</strong> ${car.renterInfo ? car.renterInfo.date : (car.start_date ? new Date(car.start_date).toLocaleDateString() : 'N/A')}</p>
+                                    <p><strong>Total Earned:</strong> $${car.renterInfo ? car.renterInfo.total : (car.total_price || '0')}</p>
+                                </div>
+                            ` : `
+                                <div class="rental-info" style="background: #e9ecef; text-align: center; color: #666;">
+                                    Waiting for customers...
+                                </div>
+                            `}
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error:', error);
+                grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Failed to load dashboard.</p>';
+            }
+        }
+
+        window.onload = loadDashboard;
+    </script>
+</body>
+</html>
